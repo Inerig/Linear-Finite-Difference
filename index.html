@@ -1,50 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Finite Difference Solver</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear Finite-Difference Method Solver</title>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Finite Difference Method Solver</h1>
-
-    <div class="inputs">
-      <label>Enter p(x):</label>
-      <input type="text" id="pFunction" value="0">
-
-      <label>Enter q(x):</label>
-      <input type="text" id="qFunction" value="0">
-
-      <label>Enter r(x):</label>
-      <input type="text" id="rFunction" value="0">
-
-      <label>Interval [a, b]:</label>
-      <input type="number" id="a" value="0">
-      <input type="number" id="b" value="2">
-
-      <label>Boundary Conditions (α, β):</label>
-      <input type="number" id="alpha" value="0">
-      <input type="number" id="beta" value="0">
-
-      <label>Number of intervals (n):</label>
-      <input type="number" id="n" value="5">
-
-      <label>Decimal places to round:</label>
-      <input type="number" id="decimalPlaces" value="4">
-
-      <button onclick="solve()">Solve</button>
+<div class="container">
+    <h1 style="text-align: center;">Linear Finite-Difference Method Solver</h1>
+    <div class="form-group">
+        <label for="pFunction">Enter function p(x): </label>
+        <div class="input-container">
+            <input type="text" id="pFunction" placeholder="p(x)" class="function-input" oninput="adjustWidth(this)">
+        </div>
     </div>
-
-    <div class="output">
-      <h2>Results</h2>
-      <div id="result"></div>
-
-      <h2>Calculations</h2>
-      <div id="calculations"></div>
+    <div class="form-group">
+        <label for="qFunction">Enter function q(x): </label>
+        <div class="input-container">
+            <input type="text" id="qFunction" placeholder="q(x)" class="function-input" oninput="adjustWidth(this)">
+        </div>
     </div>
-  </div>
-
-  <script src="script.js"></script>
+    <div class="form-group">
+        <label for="rFunction">Enter function r(x): </label>
+        <div class="input-container">
+            <input type="text" id="rFunction" placeholder="r(x)" class="function-input" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="a">Left endpoint (a): </label>
+        <div class="input-container">
+            <input type="number" id="a" value="0" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="b">Right endpoint (b): </label>
+        <div class="input-container">
+            <input type="number" id="b" value="1" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="alpha">Boundary condition y(a) (α): </label>
+        <div class="input-container">
+            <input type="number" id="alpha" value="1" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="beta">Boundary condition y(b) (β): </label>
+        <div class="input-container">
+            <input type="number" id="beta" value="1" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="n">Number of internal points (N): </label>
+        <div class="input-container">
+            <input type="number" id="n" value="10" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="decimalPlaces">Decimal places: </label>
+        <div class="input-container">
+            <input type="number" id="decimalPlaces" value="4" oninput="adjustWidth(this)">
+        </div>
+    </div>
+    <button onclick="solveAndDisplay()">Solve</button>
+    <div class="calculations">
+        <h2>Linear Finite-Difference Method Calculations:</h2>
+        <div id="ldfCalculationsContent"></div>
+    </div>
+    <table id="ldfResultTable">
+        <thead>
+            <tr>
+                <th>Step</th>
+                <th>x</th>
+                <th>ω</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="instructions">
+        <p>Instructions:</p>
+        <ul>
+            <li>Use `x` for the independent variable (position).</li>
+            <li>Use `Math` for mathematical functions (e.g., `Math.exp`, `Math.log`, `Math.sin`).</li>
+            <li>Avoid using spaces between operators and numbers or variables.</li>
+        </ul>
+    </div>
+    <div class="example">
+        <p>Examples:</p>
+        <ul>
+            <li><strong>Linear Function:</strong> \( p(x) = 0 \), \( q(x) = 0 \), \( r(x) = x \) → <code>0, 0, x</code></li>
+            <li><strong>Exponential Function:</strong> \( p(x) = 0 \), \( q(x) = -1 \), \( r(x) = 0 \) → <code>0, -1, 0</code></li>
+            <li><strong>Logarithmic Function:</strong> \( p(x) = 0 \), \( q(x) = -1/x^2 \), \( r(x) = 0 \) → <code>0, -1/Math.pow(x, 2), 0</code></li>
+            <li><strong>Trigonometric Function:</strong> \( p(x) = 0 \), \( q(x) = -1 \), \( r(x) = \sin(x) \) → <code>0, -1, Math.sin(x)</code></li>
+            <li><strong>Hyperbolic Function:</strong> \( p(x) = 0 \), \( q(x) = -1 \), \( r(x) = \sinh(x) \) → <code>0, -1, Math.sinh(x)</code></li>
+            <li><strong>Power Function:</strong> \( p(x) = 0 \), \( q(x) = -2/x \), \( r(x) = 0 \) → <code>0, -2/Math.pow(x, 2), 0</code></li>
+            <li><strong>Rational Function:</strong> \( p(x) = 0 \), \( q(x) = -1 \), \( r(x) = 1/x \) → <code>0, -1, 1/x</code></li>
+            <li><strong>Piecewise Function:</strong> \( p(x) = 0 \), \( q(x) = -1 \), \( r(x) = 
+                \begin{cases} 
+                    0 & \text{if } x < 0 \\
+                    1 & \text{otherwise}
+                \end{cases} \) → <code>0, -1, (x < 0) ? 0 : 1</code></li>
+        </ul>
+    </div>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
