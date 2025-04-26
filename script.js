@@ -89,3 +89,7 @@ function solve() {
   document.getElementById('calculations').innerHTML = calculationsContent;
 }
 
+  document.getElementById('result').innerHTML = resultContent;
+  document.getElementById('calculations').innerHTML = calculationsContent;
+}
+
